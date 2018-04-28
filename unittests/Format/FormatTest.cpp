@@ -11425,6 +11425,12 @@ TEST_F(FormatTest, FormatsLambdas) {
                "    },\n"
                "    87);",
                LLVMWithBeforeLambdaBody);
+  verifyFormat("FunctionWithOneNestedLambdas(\n"
+               "    []()\n"
+               "    {\n"
+               "      return 17;\n"
+               "    });",
+               LLVMWithBeforeLambdaBody);
   verifyFormat("TwoNestedLambdas(\n"
                "    []()\n"
                "    {\n"

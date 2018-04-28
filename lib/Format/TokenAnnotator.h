@@ -95,17 +95,6 @@ public:
   template <typename... Ts> bool endsWith(Ts... Tokens) const {
     return Last && Last->endsSequence(Tokens...);
   }
-  /// \c true if this line, starting at token 'Start', contains the given tokens in reverse order,
-  /// ignoring comments.
-  template <typename... Ts> bool containsBefore(const FormatToken& Start, Ts... Tokens) const {
-    const FormatToken *Tok = &Start;
-    while (Tok) {
-        if(Tok->startsSequence(Tokens...))
-            return true;
-        Tok = Tok->Previous;
-    }
-    return false;
-  }
   /// \c true if this line, starting at token 'Start', contains the given tokens in order,
   /// ignoring comments.
   template <typename... Ts> bool containsAfter(const FormatToken& Start, Ts... Tokens) const {
