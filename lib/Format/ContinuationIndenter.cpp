@@ -1066,7 +1066,10 @@ unsigned ContinuationIndenter::moveStateToNextToken(LineState &State,
       !Previous->isOneOf(TT_DictLiteral, TT_ObjCMethodExpr)) {
     State.Stack.back().NestedBlockInlined =
         !Newline &&
-        (Previous->isNot(tok::l_paren) || Previous->ParameterCount > 1);
+        (Previous->isNot(tok::l_paren) ||
+         (Previous->ParameterCount > 1 ||
+          (Style.BraceWrapping.BeforeLambdaBody &&
+           State.Line->containsAfter(*Previous, TT_LambdaLSquare))));
   }
 
   moveStatePastFakeLParens(State, Newline);
@@ -1299,7 +1302,10 @@ void ContinuationIndenter::moveStatePastScopeOpener(LineState &State,
       ParenState(NewIndent, LastSpace, AvoidBinPacking, NoLineBreak));
   State.Stack.back().NestedBlockIndent = NestedBlockIndent;
   State.Stack.back().BreakBeforeParameter = BreakBeforeParameter;
-  State.Stack.back().HasMultipleNestedBlocks = Current.BlockParameterCount > 1;
+  State.Stack.back().HasMultipleNestedBlocks =
+      (Current.BlockParameterCount > 1 ||
+       (Style.BraceWrapping.BeforeLambdaBody &&
+        State.Line->containsAfter(Current, TT_LambdaLSquare)));
   State.Stack.back().IsInsideObjCArrayLiteral =
       Current.is(TT_ArrayInitializerLSquare) && Current.Previous &&
       Current.Previous->is(tok::at);

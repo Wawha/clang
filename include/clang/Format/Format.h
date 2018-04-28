@@ -738,6 +738,23 @@ struct FormatStyle {
     ///   }
     /// \endcode
     bool BeforeElse;
+    /// \brief Wrap lambda block inside function parameters list.
+    /// \code
+    ///   true:
+    ///   connect(
+    ///     []()
+    ///     {
+    ///       foo();
+    ///       bar();
+    ///     });
+    ///
+    ///   false:
+    ///   connect([]() {
+    ///     foo();
+    ///     bar();
+    ///   });
+    /// \endcode
+    bool BeforeLambdaBody;
     /// \brief Indent the wrapped braces themselves.
     bool IndentBraces;
     /// \brief If ``false``, empty function body can be put on a single line.
