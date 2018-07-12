@@ -10461,6 +10461,7 @@ TEST_F(FormatTest, ParsesConfigurationBools) {
   CHECK_PARSE_NESTED_BOOL(BraceWrapping, AfterExternBlock);
   CHECK_PARSE_NESTED_BOOL(BraceWrapping, BeforeCatch);
   CHECK_PARSE_NESTED_BOOL(BraceWrapping, BeforeElse);
+  CHECK_PARSE_NESTED_BOOL(BraceWrapping, BeforeLambdaBody);
   CHECK_PARSE_NESTED_BOOL(BraceWrapping, IndentBraces);
   CHECK_PARSE_NESTED_BOOL(BraceWrapping, SplitEmptyFunction);
   CHECK_PARSE_NESTED_BOOL(BraceWrapping, SplitEmptyRecord);
@@ -11403,6 +11404,48 @@ TEST_F(FormatTest, FormatsLambdas) {
       "            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa> {\n"
       "      //\n"
       "    });");
+
+  // Check option "BraceWrapping.BeforeLambdaBody"
+  FormatStyle LLVMWithBeforeLambdaBody = getLLVMStyle();
+  LLVMWithBeforeLambdaBody.BreakBeforeBraces = FormatStyle::BS_Custom;
+  LLVMWithBeforeLambdaBody.BraceWrapping.BeforeLambdaBody = true;
+  verifyFormat("FunctionWithOneParam(\n"
+               "    []()\n"
+               "    {\n"
+               "      // A cool function...\n"
+               "      return 43;\n"
+               "    });",
+               LLVMWithBeforeLambdaBody);
+  verifyFormat("FunctionWithTwoParams(\n"
+               "    []()\n"
+               "    {\n"
+               "      // A cool function...\n"
+               "      return 43;\n"
+               "    },\n"
+               "    87);",
+               LLVMWithBeforeLambdaBody);
+  verifyFormat("FunctionWithOneNestedLambdas(\n"
+               "    []()\n"
+               "    {\n"
+               "      return 17;\n"
+               "    });",
+               LLVMWithBeforeLambdaBody);
+  verifyFormat("TwoNestedLambdas(\n"
+               "    []()\n"
+               "    {\n"
+               "      return Call(\n"
+               "          []()\n"
+               "          {\n"
+               "            return 17;\n"
+               "          });\n"
+               "    });",
+               LLVMWithBeforeLambdaBody);
+  verifyFormat("auto array = {[]()\n"
+               "              {\n"
+               "                return 43;\n"
+               "              },\n"
+               "              MyFunctor};",
+               LLVMWithBeforeLambdaBody);
 }
 
 TEST_F(FormatTest, EmptyLinesInLambdas) {

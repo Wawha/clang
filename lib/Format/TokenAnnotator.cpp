@@ -1108,11 +1108,11 @@ private:
 
     // Reset token type in case we have already looked at it and then
     // recovered from an error (e.g. failure to find the matching >).
-    if (!CurrentToken->isOneOf(TT_LambdaLSquare, TT_ForEachMacro,
-                               TT_FunctionLBrace, TT_ImplicitStringLiteral,
-                               TT_InlineASMBrace, TT_JsFatArrow, TT_LambdaArrow,
-                               TT_OverloadedOperator, TT_RegexLiteral,
-                               TT_TemplateString, TT_ObjCStringLiteral))
+    if (!CurrentToken->isOneOf(
+            TT_LambdaLSquare, TT_LambdaLBrace, TT_ForEachMacro,
+            TT_FunctionLBrace, TT_ImplicitStringLiteral, TT_InlineASMBrace,
+            TT_JsFatArrow, TT_LambdaArrow, TT_OverloadedOperator,
+            TT_RegexLiteral, TT_TemplateString, TT_ObjCStringLiteral))
       CurrentToken->Type = TT_Unknown;
     CurrentToken->Role.reset();
     CurrentToken->MatchingParen = nullptr;
@@ -2896,7 +2896,9 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
   if (Right.is(TT_InlineASMBrace))
     return Right.HasUnescapedNewline;
   if (isAllmanBrace(Left) || isAllmanBrace(Right))
-    return (Line.startsWith(tok::kw_enum) && Style.BraceWrapping.AfterEnum) ||
+    return ((Left.is(TT_LambdaLBrace) || Right.is(TT_LambdaLBrace)) &&
+            Style.BraceWrapping.BeforeLambdaBody) ||
+           (Line.startsWith(tok::kw_enum) && Style.BraceWrapping.AfterEnum) ||
            (Line.startsWith(tok::kw_typedef, tok::kw_enum) &&
             Style.BraceWrapping.AfterEnum) ||
            (Line.startsWith(tok::kw_class) && Style.BraceWrapping.AfterClass) ||
